@@ -17,8 +17,8 @@ const getContactById = async (contactId) => {
 
 const removeContact = async (contactId) => {
   const data = await fs.readFile(contactsPath);
-  return JSON.parse(data);
-  const usersFiltered = users.filter((user) => user.id != contactId);
+  const users = JSON.parse(data);
+  const usersFiltered = users.filter((user) => user.id !== contactId);
   const [deletedContact] = users.filter((user) => user.id === contactId);
 
   fs.writeFile(contactsPath, JSON.stringify(usersFiltered, null, "\t"));
@@ -29,8 +29,8 @@ const addContact = async (body) => {
   const id = uuidv4();
   const record = { id, ...body };
   const data = await fs.readFile(contactsPath);
-  return JSON.parse(data);
-  user.push(record);
+  const users = JSON.parse(data);
+  users.push(record);
   fs.writeFile(contactsPath, JSON.stringify(users, null, "\t"));
   return record;
 };
