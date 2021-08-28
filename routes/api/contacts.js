@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Contacts = require("../../model/contacts");
+const Contacts = require("../../hw02-express/model/contacts");
 const {
   validationAddContact,
   validationUpdateContact,
