@@ -3,7 +3,7 @@ require("dotenv").config();
 /* const app = require("../app"); */
 /* const { DB_HOST } = require("../password"); */
 
-const { DB_HOST } = process.env;
+const { DB_HOST /* PORT = 3030 */ } = process.env;
 /* const DB_HOST =
   "mongodb+srv://Artem:Uru4iPgDBM1e7m8T@cluster0.wr0f3.mongodb.net/online_shop?retryWrites=true&w=majority"; */
 const db = mongoose.connect(DB_HOST, {
@@ -12,11 +12,14 @@ const db = mongoose.connect(DB_HOST, {
   useUnifiedTopology: true,
 });
 /* .then(() => {
-    app.listen(3030);
+    app.listen(PORT);
+    console.log("Database connection is successful");
   })
-  .catch((error) => console.log(error)); */
-
-/* mongoose.connection.on("connected", () => {
+  .catch((error) => {
+    console.log(error);
+    process.exit(1);
+  }) */
+mongoose.connection.on("connected", () => {
   console.log("Database connection is successful");
 });
 
@@ -33,6 +36,6 @@ process.on("SIGINT", async () => {
     console.log("Connection to DB is closed and app is terminated");
     process.exit(1);
   });
-}); */
+});
 
 module.exports = db;
