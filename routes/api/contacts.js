@@ -1,125 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const Contacts = require("../../hw02-express/model/contacts");
-const {
-  validationAddContact,
-  validationUpdateContact,
-} = require("./validation");
+const { joiSchema } = require("../../model/schemas");
+const validation = require("../../middlewares/validation");
+const validationMiddleware = validation(joiSchema);
 
-router.get("/", async (req, res, next) => {
-  try {
-    const contact = await Contacts.listContacts();
-    return res.json({
-      status: "success",
-      code: 200,
-      data: { contact },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+const ctrl = require("../../model");
 
-router.get("/:id", async (req, res, next) => {
-  try {
-    const contact = await Contacts.getContactById(req.params.id);
-    if (contact) {
-      return res.json({
-        status: "success",
-        code: 200,
-        data: { contact },
-      });
-    } else {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        data: "Not found",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+router.get("/", ctrl.listContacts);
 
-router.post("/", validationAddContact, async (req, res, next) => {
-  try {
-    const contact = await Contacts.addContact(req.body);
-    return res.status(201).json({
-      status: "success",
-      code: 201,
-      data: { contact },
-    });
-  } catch (error) {
-    next(error);
-  }
-});
+router.get("/:id", ctrl.getContactById);
 
-router.delete("/:contactId", async (req, res, next) => {
-  try {
-    const contact = await Contacts.removeContact(req.params.contactId);
-    if (contact) {
-      return res.json({
-        status: "success",
-        code: 200,
-        data: { contact },
-      });
-    } else {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        message: "Not found",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+router.post("/", validationMiddleware, ctrl.addContact);
 
-router.put("/:contactId", validationUpdateContact, async (req, res, next) => {
-  try {
-    const contact = await Contacts.updateContact(
-      req.params.contactId,
-      req.body
-    );
-    if (contact) {
-      return res.json({
-        status: "success",
-        code: 200,
-        data: { contact },
-      });
-    } else {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        data: "Not found",
-      });
-    }
-  } catch (e) {
-    next(e);
-  }
-});
+router.delete("/:id", ctrl.removeContact);
 
-router.patch("/:contactId", validationUpdateContact, async (req, res, next) => {
-  try {
-    const contact = await Contacts.updateContact(
-      req.params.contactId,
-      req.body
-    );
-    if (contact) {
-      return res.json({
-        status: "success",
-        code: 200,
-        data: { contact },
-      });
-    } else {
-      return res.status(404).json({
-        status: "error",
-        code: 404,
-        data: "Not found",
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+router.put("/:id", validationMiddleware, ctrl.updateContact);
+
+router.patch("/:id/favorite", ctrl.updateFavorite);
 
 module.exports = router;
